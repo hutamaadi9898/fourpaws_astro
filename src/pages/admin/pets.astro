@@ -1,0 +1,18 @@
+﻿---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { PetManager } from '@/components/admin/PetManager';
+import { requireSession } from '@/server/auth/service';
+import { listPets } from '@/server/services/pets';
+
+const cookie = Astro.request.headers.get('cookie');
+const session = await requireSession(cookie);
+if (!session) {
+  return Astro.redirect('/login');
+}
+
+const pets = await listPets(session.user.id);
+---
+
+<AdminLayout title="Pets" userEmail={session.user.email}>
+  <PetManager client:load initialPets={pets} />
+</AdminLayout>

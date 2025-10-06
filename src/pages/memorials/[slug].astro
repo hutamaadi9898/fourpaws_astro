@@ -1,0 +1,101 @@
+﻿---
+import Layout from '@/layouts/Layout.astro';
+import { getPublishedMemorialBySlug } from '@/server/services/public';
+import { HttpError } from '@/server/http/errors';
+
+const slug = Astro.params.slug!;
+let memorial;
+try {
+  memorial = await getPublishedMemorialBySlug(slug);
+} catch (error) {
+  if (error instanceof HttpError && error.status === 404) {
+    return new Response('Not Found', { status: 404 });
+  }
+  throw error;
+}
+
+const theme = memorial.theme;
+Astro.response.headers.set('Cache-Control', 'public, max-age=600, stale-while-revalidate=1800');
+---
+
+<Layout title={`${memorial.title} — Memorial`}>
+  <article
+    class="relative min-h-[calc(100vh-120px)] overflow-hidden"
+    style={theme
+      ? {
+          ['--primary' as string]: theme.primaryColor,
+          ['--secondary' as string]: theme.secondaryColor,
+          ['--accent' as string]: theme.accentColor,
+          ['--memorial-bg' as string]: theme.backgroundColor
+        }
+      : {}}
+  >
+    <div class="absolute inset-0 -z-10 bg-gradient-to-b from-primary/10 via-transparent to-background" />
+    <div class="mx-auto flex max-w-4xl flex-col gap-12 px-6 py-16">
+      <header class="space-y-4 text-center">
+        <p class="text-sm uppercase tracking-[0.35em] text-primary">In loving memory of</p>
+        <h1 class="text-5xl font-semibold tracking-tight text-foreground" style={theme ? { fontFamily: theme.headingFont } : {}}>
+          {memorial.title}
+        </h1>
+        {memorial.subtitle && (
+          <p class="text-lg text-muted-foreground" style={theme ? { color: theme.secondaryColor } : {}}>
+            {memorial.subtitle}
+          </p>
+        )}
+        <div class="flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
+          <span>{memorial.pet.name}</span>
+          <span class="h-1 w-1 rounded-full bg-muted-foreground" aria-hidden="true"></span>
+          <span>{memorial.pet.species}</span>
+        </div>
+      </header>
+
+      {memorial.summary && (
+        <section class="rounded-2xl border border-border/60 bg-card/70 p-6 text-base text-muted-foreground shadow">
+          {memorial.summary}
+        </section>
+      )}
+
+      {memorial.story && (
+        <section class="space-y-4 rounded-2xl bg-[var(--memorial-bg,theme(colors.background))] p-8 text-base leading-7 text-foreground shadow-lg">
+          {memorial.story.split('\n\n').map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
+        </section>
+      )}
+
+      {memorial.mediaAssets.length > 0 && (
+        <section class="space-y-5">
+          <div class="space-y-2 text-center">
+            <h2 class="text-2xl font-semibold text-foreground">Gallery</h2>
+            <p class="text-sm text-muted-foreground">
+              Curated moments that capture {memorial.pet.name}'s spirit.
+            </p>
+          </div>
+          <div class="grid gap-4 md:grid-cols-2">
+            {memorial.mediaAssets.map((asset) => (
+              <figure class="rounded-xl border border-border/60 bg-card/60 p-4 text-sm text-muted-foreground">
+                <img
+                  src={`/storage/${asset.fileKey}`}
+                  alt={asset.altText ?? asset.title ?? memorial.pet.name}
+                  class="mb-3 h-48 w-full rounded-lg object-cover"
+                  loading="lazy"
+                />
+                <figcaption class="space-y-1">
+                  <strong class="block text-foreground">{asset.title ?? 'Untitled asset'}</strong>
+                  {asset.caption && <p>{asset.caption}</p>}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <footer class="rounded-2xl border border-border/60 bg-card/70 p-6 text-sm text-muted-foreground">
+        <p>
+          Published {memorial.publishedAt ? new Date(memorial.publishedAt).toLocaleDateString() : 'soon'} · Crafted with love by
+          Four Paws Studio.
+        </p>
+      </footer>
+    </div>
+  </article>
+</Layout>

@@ -17,6 +17,7 @@
     "seed:admin": "tsx scripts/seed-admin.ts"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.2.3",
     "astro": "^5.14.1",
     "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",

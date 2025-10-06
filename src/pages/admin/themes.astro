@@ -1,0 +1,18 @@
+﻿---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { ThemeManager } from '@/components/admin/ThemeManager';
+import { requireSession } from '@/server/auth/service';
+import { listThemes } from '@/server/services/themes';
+
+const cookie = Astro.request.headers.get('cookie');
+const session = await requireSession(cookie);
+if (!session) {
+  return Astro.redirect('/login');
+}
+
+const themes = await listThemes();
+---
+
+<AdminLayout title="Themes" userEmail={session.user.email}>
+  <ThemeManager client:load themes={themes} />
+</AdminLayout>

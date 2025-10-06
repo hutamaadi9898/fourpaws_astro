@@ -1,0 +1,63 @@
+﻿---
+import '../styles/globals.css';
+import { SignOutButton } from '@/components/admin/SignOutButton';
+
+interface Props {
+  title?: string;
+  userEmail: string;
+}
+
+const { title = 'Studio Admin', userEmail }: Props = Astro.props;
+const navLinks = [
+  { href: '/admin', label: 'Overview' },
+  { href: '/admin/pets', label: 'Pets' },
+  { href: '/admin/memorials', label: 'Memorials' },
+  { href: '/admin/themes', label: 'Themes' }
+];
+const currentPath = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="en" class="bg-background">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen bg-background text-foreground antialiased">
+    <div class="grid min-h-screen grid-cols-1 lg:grid-cols-[240px_1fr]">
+      <aside class="hidden border-r border-border bg-card/60 lg:flex lg:flex-col">
+        <div class="px-6 py-8">
+          <h1 class="text-xl font-semibold text-foreground">Four Paws Studio</h1>
+          <p class="mt-1 text-sm text-muted-foreground">Admin console</p>
+        </div>
+        <nav class="flex-1 space-y-1 px-2">
+          {navLinks.map((link) => (
+            <a
+              href={link.href}
+              class={`flex items-center rounded-md px-3 py-2 text-sm font-medium transition hover:bg-primary/10 hover:text-primary ${currentPath === link.href ? 'bg-primary/10 text-primary' : 'text-muted-foreground'}`}
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+        <div class="border-t border-border px-6 py-4 text-sm text-muted-foreground">
+          Signed in as
+          <span class="block font-medium text-foreground">{userEmail}</span>
+        </div>
+      </aside>
+      <main class="flex flex-col">
+        <header class="flex items-center justify-between gap-2 border-b border-border bg-background/70 px-6 py-4 backdrop-blur">
+          <div>
+            <h2 class="text-lg font-semibold tracking-tight text-foreground">{title}</h2>
+            <p class="text-sm text-muted-foreground">Manage memorial content and site settings.</p>
+          </div>
+          <SignOutButton client:idle />
+        </header>
+        <div class="flex-1 overflow-y-auto px-6 py-8">
+          <slot />
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

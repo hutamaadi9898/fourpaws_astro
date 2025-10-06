@@ -1,0 +1,50 @@
+﻿---
+import Layout from '@/layouts/Layout.astro';
+import { listPublishedMemorials } from '@/server/services/public';
+
+const memorials = await listPublishedMemorials();
+Astro.response.headers.set('Cache-Control', 'public, max-age=120, stale-while-revalidate=600');
+---
+
+<Layout title="Memorial Gallery">
+  <section class="mx-auto max-w-4xl space-y-12 py-16">
+    <header class="space-y-4 text-center">
+      <h1 class="text-4xl font-semibold tracking-tight text-foreground">Memorial Gallery</h1>
+      <p class="text-base text-muted-foreground">
+        Published tributes celebrating the lives and legacies of beloved companions.
+      </p>
+    </header>
+
+    <div class="grid gap-6 md:grid-cols-2">
+      {memorials.map((memorial) => (
+        <a
+          href={`/memorials/${memorial.slug}`}
+          class="group relative overflow-hidden rounded-2xl border border-border bg-card/80 p-6 shadow transition hover:border-primary/40"
+        >
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold text-foreground transition group-hover:text-primary">
+              {memorial.title}
+            </h2>
+            <span class="text-xs text-muted-foreground">
+              {memorial.publishedAt ? new Date(memorial.publishedAt).toLocaleDateString() : ''}
+            </span>
+          </div>
+          {memorial.subtitle && <p class="mt-2 text-sm text-muted-foreground">{memorial.subtitle}</p>}
+          <p class="mt-4 line-clamp-3 text-sm leading-6 text-muted-foreground">
+            {memorial.summary ?? 'A heartfelt tribute awaiting its story.'}
+          </p>
+          <div class="mt-6 flex items-center justify-between text-xs text-muted-foreground">
+            <span>{memorial.pet.name}</span>
+            <span>{memorial.pet.species}</span>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    {memorials.length === 0 && (
+      <div class="rounded-2xl border border-dashed border-border p-12 text-center text-sm text-muted-foreground">
+        No memorials have been published yet. Once a tribute is published it will appear here.
+      </div>
+    )}
+  </section>
+</Layout>

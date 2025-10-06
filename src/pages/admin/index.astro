@@ -1,0 +1,20 @@
+﻿---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { Dashboard } from '@/components/admin/Dashboard';
+import { requireSession } from '@/server/auth/service';
+import { listPets } from '@/server/services/pets';
+import { listMemorials } from '@/server/services/memorials';
+
+const cookie = Astro.request.headers.get('cookie');
+const session = await requireSession(cookie);
+if (!session) {
+  return Astro.redirect('/login');
+}
+
+const pets = await listPets(session.user.id);
+const memorials = await listMemorials(session.user.id);
+---
+
+<AdminLayout title="Overview" userEmail={session.user.email}>
+  <Dashboard client:load pets={pets} memorials={memorials} />
+</AdminLayout>

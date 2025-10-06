@@ -1,0 +1,27 @@
+﻿---
+import Layout from '../layouts/Layout.astro';
+import { LoginForm } from '@/components/admin/LoginForm';
+import { requireSession } from '@/server/auth/service';
+
+const cookie = Astro.request.headers.get('cookie');
+const session = await requireSession(cookie);
+if (session) {
+  return Astro.redirect('/admin');
+}
+---
+
+<Layout title="Sign in">
+  <section class="mx-auto flex min-h-[calc(100vh-160px)] w-full max-w-md flex-col justify-center">
+    <div class="rounded-2xl border border-border bg-card/80 p-8 shadow-lg backdrop-blur">
+      <div class="space-y-2 text-center">
+        <h1 class="text-2xl font-semibold tracking-tight text-foreground">Welcome back</h1>
+        <p class="text-sm text-muted-foreground">
+          Sign in to manage memorial pages and studio content.
+        </p>
+      </div>
+      <div class="mt-8">
+        <LoginForm client:idle />
+      </div>
+    </div>
+  </section>
+</Layout>

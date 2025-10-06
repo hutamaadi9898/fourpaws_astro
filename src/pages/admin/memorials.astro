@@ -1,0 +1,24 @@
+﻿---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { MemorialManager } from '@/components/admin/MemorialManager';
+import { requireSession } from '@/server/auth/service';
+import { listMemorials } from '@/server/services/memorials';
+import { listPets } from '@/server/services/pets';
+import { listThemes } from '@/server/services/themes';
+
+const cookie = Astro.request.headers.get('cookie');
+const session = await requireSession(cookie);
+if (!session) {
+  return Astro.redirect('/login');
+}
+
+const [memorials, pets, themes] = await Promise.all([
+  listMemorials(session.user.id),
+  listPets(session.user.id),
+  listThemes()
+]);
+---
+
+<AdminLayout title="Memorials" userEmail={session.user.email}>
+  <MemorialManager client:load initialMemorials={memorials} pets={pets} themes={themes} />
+</AdminLayout>

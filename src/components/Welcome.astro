@@ -1,57 +1,10 @@
 ﻿---
-const features = [
-  {
-    title: 'Story-first memorials',
-    description:
-      'Compose heartfelt narratives, galleries, and timelines for every beloved companion.'
-  },
-  {
-    title: 'Guided publishing',
-    description:
-      'Preview drafts, schedule launches, and generate share cards in a single flow.'
-  },
-  {
-    title: 'Private control',
-    description:
-      'A secure owner dashboard keeps every tribute invitation-only until you say otherwise.'
-  }
-];
+import { LandingHero } from './LandingHero';
 ---
 
-<section class="relative overflow-hidden bg-gradient-to-b from-primary/5 via-background to-background">
-  <div class="absolute inset-x-0 top-0 -z-10 h-72 bg-[radial-gradient(circle_at_top,theme(colors.primary/20),transparent_65%)]" />
-  <div class="container mx-auto flex min-h-[70vh] flex-col items-center justify-center gap-12 py-20 text-center">
-    <div class="space-y-6">
-      <span class="inline-flex items-center rounded-full bg-primary/10 px-4 py-1 text-sm font-medium text-primary">Four Paws Studio</span>
-      <h1 class="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl">
-        Craft bespoke pet memorial microsites with ease.
-      </h1>
-      <p class="mx-auto max-w-2xl text-base text-muted-foreground sm:text-lg">
-        Build, customize, and publish beautiful tributes from one secure dashboard. Preserve memories with responsive layouts, curated galleries, and guestbook support.
-      </p>
-      <div class="flex flex-col items-center justify-center gap-4 sm:flex-row">
-        <a
-          href="#"
-          class="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-sm transition hover:bg-primary/90"
-        >
-          View the roadmap
-        </a>
-        <a
-          href="#"
-          class="inline-flex items-center justify-center rounded-md border border-input px-6 py-3 text-sm font-medium text-foreground shadow-sm transition hover:bg-muted"
-        >
-          Explore design system
-        </a>
-      </div>
-    </div>
-
-    <div class="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {features.map((feature) => (
-        <article class="rounded-xl border border-border bg-card/60 p-6 text-left shadow-sm backdrop-blur">
-          <h3 class="text-lg font-semibold text-foreground">{feature.title}</h3>
-          <p class="mt-2 text-sm leading-6 text-muted-foreground">{feature.description}</p>
-        </article>
-      ))}
-    </div>
+<section class="relative overflow-hidden bg-slate-950">
+  <div class="absolute inset-x-0 -top-72 h-[520px] bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.2),transparent_65%)] blur-3xl" aria-hidden="true"></div>
+  <div class="relative mx-auto max-w-6xl space-y-28 px-6 py-24 sm:px-10 lg:px-12">
+    <LandingHero client:load />
   </div>
 </section>
